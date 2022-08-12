@@ -29,7 +29,7 @@ app.post("/feedback", async (req, res) => {
 });
 
 app.get("/getfeedback", async (req, res) => {
-  await client.query("SELECT * FROM feedback", (error, result) => {
+  await client.query("SELECT * FROM feedback ORDER BY id DESC", (error, result) => {
     if (error) {
       res.status(400).send(error);
     }
