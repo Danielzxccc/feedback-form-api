@@ -16,39 +16,27 @@ app.use(cors());
 //routes
 app.post("/feedback", async (req, res) => {
   const { message, typeoftask } = req.body;
-  await client.query(
+  try {
+     const { rows } = await client.query(
     "INSERT INTO feedback (message, typeoftask) VALUES ($1, $2) RETURNING *",
-    [message, typeoftask],
-    (error, result) => {
-      if (error) {
-        res.status(400).send(error);
-      }
-      res.status(201).send(`Feedback added with ID: ${result.rows[0].id}`);
-    }
-  );
-});
+    [message, typeoftask],)
+    res.status(201).send(rows[0].id)
+  } catch (e) {
+    res.status(400).send(e)
+  }
+})
 
-app.get("/getfeedback", async (req, res) => {
-  await client.query("SELECT * FROM feedback ORDER BY id DESC", (error, result) => {
-    if (error) {
-      res.status(400).send(error);
-    }
-    res.status(200).json(result.rows);
-  });
-});
+app.get("/getfeedback", async (req, res) =>{
+  try {
+    const { rows } = await client.query("SELECT * FROM feedbacks ORDER BY id DESC")
+    res.status(200).send(rows);
+  } catch (e) {
+      res.status(400).send(e)
+  }
+})
+
 
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
 );
 
-// (async () => {
-//   await client.connect();
-//   try {
-//     const results = await client.query("SELECT NOW()");
-//     console.log(results);
-//   } catch (err) {
-//     console.error("error executing query:", err);
-//   } finally {
-//     client.end();
-//   }
-// })();
