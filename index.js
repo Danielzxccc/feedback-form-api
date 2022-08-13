@@ -20,7 +20,7 @@ app.post("/feedback", async (req, res) => {
      const { rows } = await client.query(
     "INSERT INTO feedback (message, typeoftask) VALUES ($1, $2) RETURNING *",
     [message, typeoftask],)
-    res.status(201).send(rows[0].id)
+    res.status(201).send({id : rows[0].id})
   } catch (e) {
     res.status(400).send(e)
   }
@@ -28,7 +28,7 @@ app.post("/feedback", async (req, res) => {
 
 app.get("/getfeedback", async (req, res) =>{
   try {
-    const { rows } = await client.query("SELECT * FROM feedbacks ORDER BY id DESC")
+    const { rows } = await client.query("SELECT * FROM feedback ORDER BY id DESC")
     res.status(200).send(rows);
   } catch (e) {
       res.status(400).send(e)
